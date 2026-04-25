@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DIY Glass Mosaic Stepping Stones — Step-by-Step Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --night:   #050810;
+    --deep:    #0A0F1E;
+    --glass-blue:  #1E6FCC;
+    --glass-teal:  #0ABFA3;
+    --glass-amber: #E8921A;
+    --glass-green: #1AAE6F;
+    --gold:    #C9A84C;
+    --white:   #F5F0E8;
+    --muted:   #8899AA;
+    --card-bg: rgba(255,255,255,0.04);
+    --border:  rgba(255,255,255,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--night);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ──────────────────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    padding: 4rem 2rem 6rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 80%, #0A2A5E 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 20% 50%, #0A3A2A 0%, transparent 60%),
+                radial-gradient(ellipse 40% 40% at 80% 30%, #2A1A0A 0%, transparent 60%),
+                var(--night);
+    z-index: 0;
+  }
+
+  /* Glowing orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.3;
+    animation: float 8s ease-in-out infinite;
+  }
+  .orb-1 { width: 300px; height: 300px; background: var(--glass-blue); top: 10%; left: 5%; animation-delay: 0s; }
+  .orb-2 { width: 200px; height: 200px; background: var(--glass-teal); top: 60%; right: 10%; animation-delay: -3s; }
+  .orb-3 { width: 150px; height: 150px; background: var(--glass-amber); bottom: 20%; left: 30%; animation-delay: -5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+
+  /* Stones path illustration */
+  .stones-preview {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 3rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .stone {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.15);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(30,111,204,0.4), 0 0 60px rgba(30,111,204,0.2);
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+  .stone:nth-child(2) { animation-delay: -1s; box-shadow: 0 0 30px rgba(10,191,163,0.4), 0 0 60px rgba(10,191,163,0.2); }
+  .stone:nth-child(3) { animation-delay: -2s; box-shadow: 0 0 30px rgba(232,146,26,0.4), 0 0 60px rgba(232,146,26,0.2); }
+  .stone-inner {
+    width: 100%; height: 100%;
+    background: conic-gradient(
+      var(--glass-blue) 0deg 60deg,
+      var(--glass-teal) 60deg 130deg,
+      var(--glass-amber) 130deg 200deg,
+      var(--glass-green) 200deg 280deg,
+      var(--glass-blue) 280deg 360deg
+    );
+    opacity: 0.85;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(30,111,204,0.4), 0 0 60px rgba(30,111,204,0.2); }
+    50% { box-shadow: 0 0 50px rgba(30,111,204,0.7), 0 0 100px rgba(30,111,204,0.3); }
+  }
+
+  .badge {
+    position: relative; z-index: 1;
+    display: inline-block;
+    padding: 6px 18px;
+    border: 1px solid var(--glass-teal);
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--glass-teal);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    position: relative; z-index: 1;
+    margin-bottom: 1.25rem;
+    max-width: 800px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--glass-blue), var(--glass-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    position: relative; z-index: 1;
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .hero-sub strong { color: var(--white); font-weight: 500; }
+
+  /* ── CTA BUTTON ────────────────────────────────────────────────────── */
+  .cta-wrap {
+    position: relative; z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .btn-buy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, var(--glass-blue), var(--glass-teal));
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 30px rgba(30,111,204,0.4);
+    text-decoration: none;
+  }
+
+  .btn-buy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(30,111,204,0.6);
+  }
+
+  .btn-buy:active { transform: translateY(0); }
+
+  .price-tag {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+  }
+
+  .price-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .secure-note {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* ── SCROLL ARROW ──────────────────────────────────────────────────── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: bounce 2s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* ── SECTION ───────────────────────────────────────────────────────── */
+  section { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--glass-teal);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+
+  /* ── NIGHT GLOW PHOTO BLOCK ────────────────────────────────────────── */
+  .photo-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 3rem 0;
+  }
+
+  .photo-inner {
+    padding: 3rem;
+    background: radial-gradient(ellipse at center, rgba(30,111,204,0.15) 0%, transparent 70%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .glow-stones-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .glow-stone {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* ── WHAT'S INSIDE ─────────────────────────────────────────────────── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(30,111,204,0.4);
+    background: rgba(30,111,204,0.05);
+  }
+
+  .feature-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .feature-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+  }
+
+  .feature-text span {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── STATS ROW ─────────────────────────────────────────────────────── */
+  .stats {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 3rem 0;
+  }
+
+  .stat {
+    flex: 1;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--glass-teal);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* ── STEPS PREVIEW ─────────────────────────────────────────────────── */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .step-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--glass-blue), var(--glass-teal));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  .step-text span {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  /* ── TESTIMONIAL / HOOK ────────────────────────────────────────────── */
+  .hook-block {
+    background: linear-gradient(135deg, rgba(30,111,204,0.12), rgba(10,191,163,0.08));
+    border: 1px solid rgba(30,111,204,0.25);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    margin: 3rem 0;
+  }
+
+  .hook-block .big-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+    font-style: italic;
+  }
+
+  /* ── BOTTOM CTA ────────────────────────────────────────────────────── */
+  .bottom-cta {
+    text-align: center;
+    padding: 5rem 2rem;
+    border-top: 1px solid var(--border);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .bottom-cta h2 { margin-bottom: 1rem; }
+  .bottom-cta p { color: var(--muted); margin-bottom: 2.5rem; line-height: 1.7; }
+
+  /* ── FOOTER ────────────────────────────────────────────────────────── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── MODAL / STRIPE ────────────────────────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(5,8,16,0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: #0D1220;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+  }
+
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal .modal-sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .close-btn {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    background: none; border: none; color: var(--muted);
+    font-size: 1.3rem; cursor: pointer; line-height: 1;
+  }
+
+  .form-group { margin-bottom: 1.25rem; }
+
+  .form-group label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--white);
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus { border-color: var(--glass-teal); }
+
+  #card-element {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    transition: border-color 0.2s;
+  }
+
+  #card-element.focused { border-color: var(--glass-teal); }
+
+  #card-errors {
+    color: #FF6B6B;
+    font-size: 0.82rem;
+    margin-top: 0.5rem;
+    min-height: 1.2em;
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--glass-blue), var(--glass-teal));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.9rem;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: opacity 0.2s;
+  }
+
+  .submit-btn:hover { opacity: 0.9; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .modal-secure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 1rem;
+  }
+
+  /* ── SUCCESS STATE ─────────────────────────────────────────────────── */
+  .success-box {
+    display: none;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .success-box .checkmark {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .success-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--glass-teal);
+  }
+
+  .success-box p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--glass-teal);
+    color: var(--night);
+    font-weight: 600;
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  @media (max-width: 600px) {
+    .stats { flex-direction: column; }
+    .stone { width: 65px; height: 65px; }
+    .stones-preview { gap: 0.75rem; }
+    section { padding: 3rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="stones-preview">
+    <div class="stone"><div class="stone-inner"></div></div>
+    <div class="stone"><div class="stone-inner" style="filter:hue-rotate(80deg)"></div></div>
+    <div class="stone"><div class="stone-inner" style="filter:hue-rotate(160deg)"></div></div>
+  </div>
+
+  <div class="badge">Step-by-Step PDF Guide</div>
+
+  <h1>Glass Mosaic Stepping Stones<br/><span>That Glow at Night</span></h1>
+
+  <p class="hero-sub">
+    Embed coloured glass into polished concrete and create a garden path that looks stunning by day —
+    and <strong>glows like stained glass windows</strong> after dark.
+  </p>
+
+  <div class="cta-wrap">
+    <div class="price-tag">$3.00</div>
+    <button class="btn-buy" onclick="openModal()">
+      ⬇ Download the Guide
+    </button>
+    <div class="price-note">Instant PDF download · No account needed</div>
+    <div class="secure-note">🔒 Secure payment via Stripe</div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <svg width="12" height="20" viewBox="0 0 12 20" fill="none"><path d="M6 0v16M1 11l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </div>
+</section>
+
+<!-- NIGHT GLOW BLOCK -->
+<section style="padding-top:0">
+  <div class="photo-block">
+    <div class="photo-inner">
+      <div class="glow-stones-row">
+        <div class="glow-stone" style="background:radial-gradient(circle,#1E6FCC,#0A0F1E);box-shadow:0 0 30px #1E6FCC88">💎</div>
+        <div class="glow-stone" style="background:radial-gradient(circle,#0ABFA3,#0A0F1E);box-shadow:0 0 30px #0ABFA388">💚</div>
+        <div class="glow-stone" style="background:radial-gradient(circle,#E8921A,#0A0F1E);box-shadow:0 0 30px #E8921A88">🟠</div>
+        <div class="glow-stone" style="background:radial-gradient(circle,#1E6FCC,#0A0F1E);box-shadow:0 0 30px #1E6FCC88">🔵</div>
+        <div class="glow-stone" style="background:radial-gradient(circle,#1AAE6F,#0A0F1E);box-shadow:0 0 30px #1AAE6F88">🌿</div>
+      </div>
+      <p style="max-width:500px;color:var(--muted);line-height:1.7;font-size:0.95rem">
+        By day, the polished mosaic catches sunlight brilliantly.<br/>
+        At night, solar lights beneath each stone make the glass glow from within —<br/>
+        <strong style="color:var(--white)">like walking on stained glass.</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num">$8–15</span>
+      <span class="stat-label">Cost per stone</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">$50–120</span>
+      <span class="stat-label">Store equivalent</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">30 min</span>
+      <span class="stat-label">Active work each</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Beginner</span>
+      <span class="stat-label">Skill level</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INSIDE -->
+<section>
+  <div class="section-label">What's Inside</div>
+  <h2>Everything You Need to<br/>Make These Yourself</h2>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <div class="feature-text">
+        <strong>Full materials list</strong>
+        <span>Exact quantities, product names, and where to buy glass and concrete</span>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💎</div>
+      <div class="feature-text">
+        <strong>Glass selection guide</strong>
+        <span>Which colors glow best at night and where to source them cheaply</span>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔧</div>
+      <div class="feature-text">
+        <strong>Polishing technique</strong>
+        <span>Step-by-step with orbital polisher — grit progression explained clearly</span>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌙</div>
+      <div class="feature-text">
+        <strong>Night glow lighting setup</strong>
+        <span>How to place solar lights for maximum stained-glass effect</span>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛠️</div>
+      <div class="feature-text">
+        <strong>Troubleshooting guide</strong>
+        <span>Cracking glass, uneven surface, polisher marks — all covered</span>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📸</div>
+      <div class="feature-text">
+        <strong>Real photos every step</strong>
+        <span>From wet concrete to polished reveal — you always know what to expect</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS PREVIEW -->
+<section>
+  <div class="section-label">The Process</div>
+  <h2>8 Simple Steps</h2>
+
+  <div class="steps-list">
+    <div class="step-row"><div class="step-num">1</div><div class="step-text"><strong>Prepare your round mold</strong><span>Any round plastic basin works — oil it well</span></div></div>
+    <div class="step-row"><div class="step-num">2</div><div class="step-text"><strong>Mix concrete to perfect consistency</strong><span>Slightly wetter than usual — allows glass to settle</span></div></div>
+    <div class="step-row"><div class="step-num">3</div><div class="step-text"><strong>Pour and press glass face-down</strong><span>Pack pieces close — gaps show after polishing</span></div></div>
+    <div class="step-row"><div class="step-num">4</div><div class="step-text"><strong>Cover with final concrete layer</strong><span>Screed flat — critical for polishing</span></div></div>
+    <div class="step-row"><div class="step-num">5</div><div class="step-text"><strong>Cure for 72 hours</strong><span>Patience = stronger stone = better polish</span></div></div>
+    <div class="step-row"><div class="step-num">6</div><div class="step-text"><strong>Unmold and flip</strong><span>Glass side up — ready for the reveal</span></div></div>
+    <div class="step-row"><div class="step-num">7</div><div class="step-text"><strong>Polish with orbital sander</strong><span>50→100→200→400 grit. The most satisfying step.</span></div></div>
+    <div class="step-row"><div class="step-num">8</div><div class="step-text"><strong>Seal and install with lighting</strong><span>Add solar uplights. Watch your garden transform at night.</span></div></div>
+  </div>
+</section>
+
+<!-- HOOK QUOTE -->
+<section style="padding-top:0">
+  <div class="hook-block">
+    <p class="big-quote">"Every person who walks into our garden at night stops dead in their tracks. They genuinely cannot believe these are homemade."</p>
+    <p style="color:var(--muted);font-size:0.85rem">— The reaction you'll get. Every time.</p>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="section-label">Get the Guide</div>
+  <h2>Ready to Build Yours?</h2>
+  <p>One download. Instant access. Make as many stones as you want — the guide is yours to keep forever.</p>
+  <div class="price-tag" style="margin-bottom:1.25rem">$3.00</div>
+  <button class="btn-buy" onclick="openModal()">⬇ Download Now — $3.00</button>
+  <div style="margin-top:1rem;color:var(--muted);font-size:0.8rem">Instant PDF download · Secure payment · No subscription</div>
+</div>
+
+<footer>
+  © 2026 DIY Craft Guides · Made with ❤️ · Questions? Contact us via the link below.
+</footer>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+
+    <!-- Payment form -->
+    <div id="payment-form-wrap">
+      <h3>Complete Your Purchase</h3>
+      <p class="modal-sub">DIY Glass Mosaic Stepping Stones Guide (PDF) — $3.00</p>
+
+      <div class="form-group">
+        <label>Your email (for delivery)</label>
+        <input type="email" id="email-input" placeholder="you@example.com"/>
+      </div>
+
+      <div class="form-group">
+        <label>Card details</label>
+        <div id="card-element"></div>
+        <div id="card-errors"></div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" onclick="handlePayment()">
+        Pay $3.00 & Download
+      </button>
+
+      <div class="modal-secure">🔒 Secured by Stripe · Your card details are never stored</div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-box" id="success-box">
+      <span class="checkmark">✅</span>
+      <h3>Payment Successful!</h3>
+      <p>Your PDF guide is ready. Click below to download it instantly.<br/>A receipt has been sent to your email.</p>
+      <a href="DIY_Glass_Mosaic_Stepping_Stones_Guide.pdf" download class="download-btn">
+        ⬇ Download Your Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STRIPE SETUP ─────────────────────────────────────────────────────────────
+// IMPORTANT: Replace 'pk_test_YOUR_KEY_HERE' with your actual Stripe publishable key
+// Get it from: https://dashboard.stripe.com/apikeys
+const STRIPE_KEY = 'pk_test_YOUR_PUBLISHABLE_KEY_HERE';
+
+let stripe, cardElement;
+
+function initStripe() {
+  if (!stripe) {
+    stripe = Stripe(STRIPE_KEY);
+    const elements = stripe.elements({
+      appearance: {
+        theme: 'night',
+        variables: {
+          colorPrimary: '#0ABFA3',
+          colorBackground: 'rgba(255,255,255,0.05)',
+          colorText: '#F5F0E8',
+          colorDanger: '#FF6B6B',
+          borderRadius: '8px',
+        }
+      }
+    });
+    cardElement = elements.create('card', {
+      style: {
+        base: {
+          color: '#F5F0E8',
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: '15px',
+          '::placeholder': { color: '#8899AA' }
+        }
+      }
+    });
+    cardElement.mount('#card-element');
+    cardElement.on('focus', () => document.getElementById('card-element').classList.add('focused'));
+    cardElement.on('blur',  () => document.getElementById('card-element').classList.remove('focused'));
+    cardElement.on('change', e => {
+      document.getElementById('card-errors').textContent = e.error ? e.error.message : '';
+    });
+  }
+}
+
+function openModal() {
+  document.getElementById('modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(initStripe, 100);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+async function handlePayment() {
+  const email = document.getElementById('email-input').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('card-errors').textContent = 'Please enter a valid email address.';
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  try {
+    // ── IMPORTANT ──────────────────────────────────────────────────────────
+    // This calls YOUR backend to create a PaymentIntent.
+    // You need a small server (Node.js, Python, etc.) that:
+    //   1. Receives a POST request
+    //   2. Creates a Stripe PaymentIntent for $3.00 (300 cents)
+    //   3. Returns the client_secret
+    //
+    // Example Node.js backend (stripe-server.js):
+    //   const stripe = require('stripe')('sk_test_YOUR_SECRET_KEY');
+    //   app.post('/create-payment-intent', async (req, res) => {
+    //     const intent = await stripe.paymentIntents.create({
+    //       amount: 300, currency: 'usd',
+    //       receipt_email: req.body.email,
+    //     });
+    //     res.json({ clientSecret: intent.client_secret });
+    //   });
+    //
+    // Replace the URL below with your actual backend URL:
+    const response = await fetch('/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, amount: 300, currency: 'usd' })
+    });
+
+    const { clientSecret, error: serverError } = await response.json();
+    if (serverError) throw new Error(serverError);
+
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: { email }
+      }
+    });
+
+    if (error) {
+      document.getElementById('card-errors').textContent = error.message;
+      btn.disabled = false;
+      btn.textContent = 'Pay $3.00 & Download';
+    } else if (paymentIntent.status === 'succeeded') {
+      document.getElementById('payment-form-wrap').style.display = 'none';
+      document.getElementById('success-box').style.display = 'block';
+    }
+  } catch (err) {
+    document.getElementById('card-errors').textContent = 'Something went wrong. Please try again.';
+    btn.disabled = false;
+    btn.textContent = 'Pay $3.00 & Download';
+  }
+}
+</script>
+</body>
+</html>
